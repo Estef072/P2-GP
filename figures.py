@@ -224,7 +224,7 @@ class Triangulo (object):
         self.material= material
 
     def ray_intersect(self, orig, dir):
-        EPSILON = 0.0000001
+        
         
         vr0_vr1 = np.subtract(self.vector1,self.vector0)
         vr0_vr2 = np.subtract(self.vector2,self.vector0)
@@ -232,11 +232,9 @@ class Triangulo (object):
         PVET = np.cross (dir,  vr0_vr2)
         DET = np.dot(vr0_vr1, PVET)
         DET_INVER = 1/DET
+        EPSILON = 0.0000001
 
-        if  DET < EPSILON: 
-            return None
-
-        if abs(DET) < EPSILON: 
+        if -EPSILON < DET and DET < EPSILON:
             return None
 
         TVEC = np.subtract(orig, self.vector0)
