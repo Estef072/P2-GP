@@ -12,11 +12,11 @@ TRANSPARENT = 2
 
 
 class Intersect(object):
-    def __init__(self, distance, point, normal,texCoords, sceneObj):
+    def __init__(self, distance, point, normal,texcoords, sceneObj):
         self.distance = distance
         self.point = point
         self.normal = normal
-        self.texCoords = texCoords
+        self.texcoords = texcoords
         self.sceneObj = sceneObj
 
 class Material(object):
@@ -217,11 +217,11 @@ class AABB(object):
     """
 class Triangulo (object): 
    
-    def __init__(self, vector0, vector1,vector2, materia = Material()):
+    def __init__(self, vector0, vector1,vector2, material):
         self.vector0= vector0
         self.vector1= vector1
         self.vector2= vector2
-        self.material= materia
+        self.material= material
 
     def ray_intersect(self, orig, dir):
         EPSILON = 0.0000001
@@ -233,7 +233,10 @@ class Triangulo (object):
         DET = np.dot(vr0_vr1, PVET)
         DET_INVER = 1/DET
 
-        if -EPSILON < DET < EPSILON: 
+        if  DET < EPSILON: 
+            return None
+
+        if abs(DET) < EPSILON: 
             return None
 
         TVEC = np.subtract(orig, self.vector0)
@@ -245,14 +248,14 @@ class Triangulo (object):
 
         QVEC = np.cross(TVEC, vr0_vr1)
 
-        valor1= np.dot(dir, PVET) * DET_INVER
+        valor1= np.dot(dir, QVEC) * DET_INVER
         
         if valor1 < 0 or U + valor1 > 1:
             return None
 
         dt: float = np.dot(vr0_vr2, QVEC) * DET_INVER
 
-        if dt <=  EPSILON:
+        if dt < 0:
             return None
         
         valor2 = np.add(orig, dt*np.array(dir))
@@ -262,7 +265,7 @@ class Triangulo (object):
         return Intersect(distance = dt,
                             point = valor2,
                             normal = normal,
-                            texCoords = (U,valor1),
+                            texcoords = (U,valor1),
                             sceneObj = self)    
 
         
