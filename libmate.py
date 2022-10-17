@@ -46,3 +46,5 @@ def cross(v0, v1):
 def norm(lista):   
     valor1 = math.sqrt((lista[0] ** 2) + (lista[1] ** 2) + (lista[2] ** 2))  
     return valor1
+
+def div 
