@@ -252,7 +252,7 @@ class Triangulo (object):
 
         dt: float = np.dot(vr0_vr2, QVEC) * DET_INVER
 
-        if dt > 0:
+        if dt <=  EPSILON:
             return None
         
         valor2 = np.add(orig, dt*np.array(dir))
@@ -262,7 +262,7 @@ class Triangulo (object):
         return Intersect(distance = dt,
                             point = valor2,
                             normal = normal,
-                             texCoords = None,
+                            texCoords = (U,valor1),
                             sceneObj = self)    
 
         

@@ -24,15 +24,7 @@ rtx = Raytracer(width, height)
 rtx.envMap = Texture("parkingLot.bmp")
 
 rtx.lights.append( AmbientLight(intensity = 0.1 ))
-#rtx.lights.append( DirectionalLight(direction = (0,0,-1), intensity = 0.5 ))
-rtx.scene.append( Triangulo((-1.5,1,-7), (1.5,1,-7), (0,3,-7), stone) )
-rtx.scene.append( Triangulo((1.5,1,-7), (2,2,-7), (0,3,-7), mirror) )
-
-rtx.scene.append( Triangulo((-1.5,-1,-7), (1.5,-1,-7), (0,1,-7), stone) )
-rtx.scene.append( Triangulo((1.5,-1,-7), (2,0,-7), (0,1,-7), mirror) )
-
-rtx.scene.append( Triangulo((-1.5,-3,-7), (1.5,-3,-7), (0,-1,-7), brick) )
-rtx.scene.append( Triangulo((1.5,-3,-7), (2,-2,-7), (0,-1,-7), stone) )
+rtx.scene.append( Triangulo(vector0=(-1.5,1,-7), vector1=(1.5,1,-7), vector2=(0,3,-7),materia=materialOP1) )
 
 
 rtx.glRender()
