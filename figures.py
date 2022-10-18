@@ -1,7 +1,6 @@
-from msilib.schema import Class
-from telnetlib import DET
-import numpy as np
+from numpy import arctan2, pi, arccos
 from math import sqrt, pow, pi
+import libmate as lb
 
 WHITE = (1,1,1)
 BLACK = (0,0,0)
@@ -35,9 +34,9 @@ class Sphere(object):
         self.material = material
 
     def ray_intersect(self, orig, dir):
-        L = np.subtract(self.center, orig)
-        tca = np.dot(L, dir)
-        d = (np.linalg.norm(L) ** 2 - tca ** 2) ** 0.5
+        L = lb.suv1stract(self.center, orig)
+        tca = lb.dot(L, dir)
+        d = (lb.norm(L) ** 2 - tca ** 2) ** 0.5
 
         if d > self.radius:
             return None
@@ -53,12 +52,12 @@ class Sphere(object):
             return None
         
         # P = O + t0 * D
-        P = np.add(orig, t0 * np.array(dir))
-        normal = np.subtract(P, self.center)
-        normal = normal / np.linalg.norm(normal)
+        P = lb.add(orig, t0 * dir)
+        normal = lb.suv1stract(P, self.center)
+        normal = normal / lb.norm(normal)
 
-        u = 1 - ((np.arctan2(normal[2], normal[0]) / (2 * np.pi)) + 0.5)
-        v = np.arccos(-normal[1]) / np.pi
+        u = 1 - ((arctan2(normal[2], normal[0]) / (2 * pi)) + 0.5)
+        v = arccos(-normal[1]) / pi
 
         uvs = (u,v)
 
@@ -72,20 +71,20 @@ class Sphere(object):
 class Plane(object):
     def __init__(self, position, normal,  material):
         self.position = position
-        self.normal = normal / np.linalg.norm(normal)
+        self.normal =lb.div(normal, lb.norm(normal)) 
         self.material = material
 
     def ray_intersect(self, orig, dir):
         # Distancia = (( planePos - origRayo) o normal) / (direccionRayo o normal)
-        denom = np.dot( dir, self.normal)
+        denom = lb.dot( dir, self.normal)
 
         if abs(denom) > 0.0001:
-            num = np.dot( np.subtract(self.position, orig), self.normal)
+            num = lb.dot( lb.suv1stract(self.position, orig), self.normal)
             t = num / denom
 
             if t > 0:
                 # P = O + t*D
-                P = np.add(orig, t * np.array(dir))
+                P = lb.add(orig, t * dir)
                 return Intersect(distance = t,
                                  point = P,
                                  normal = self.normal,
@@ -107,8 +106,8 @@ class Disk(object):
         if intersect is None:
             return None
 
-        contact = np.subtract(intersect.point, self.plane.position)
-        contact = np.linalg.norm(contact)
+        contact =lb.suv1stract(intersect.point, self.plane.position)
+        contact = lb.norm(contact)
 
         if contact > self.radius:
             return None
@@ -139,16 +138,16 @@ class AABB(object):
         halfSizes[2] = size[2] / 2
 
         # Sides
-        self.planes.append( Plane( np.add(position, (halfSizes[0],0,0)), (1,0,0), material ))
-        self.planes.append( Plane( np.add(position, (-halfSizes[0],0,0)), (-1,0,0), material ))
+        self.planes.append( Plane( lb.add(position, (halfSizes[0],0,0)), (1,0,0), material ))
+        self.planes.append( Plane( lb.add(position, (-halfSizes[0],0,0)), (-1,0,0), material ))
 
         # Up and Down
-        self.planes.append( Plane( np.add(position, (0,halfSizes[1],0)), (0,1,0), material ))
-        self.planes.append( Plane( np.add(position, (0,-halfSizes[1],0)), (0,-1,0), material ))
+        self.planes.append( Plane( lb.add(position, (0,halfSizes[1],0)), (0,1,0), material ))
+        self.planes.append( Plane( lb.add(position, (0,-halfSizes[1],0)), (0,-1,0), material ))
 
         # Front and back
-        self.planes.append( Plane( np.add(position, (0,0,halfSizes[2])), (0,0,1), material ))
-        self.planes.append( Plane( np.add(position, (0,0,-halfSizes[2])), (0,0,-1), material ))
+        self.planes.append( Plane( lb.add(position, (0,0,halfSizes[2])), (0,0,1), material ))
+        self.planes.append( Plane( lb.add(position, (0,0,-halfSizes[2])), (0,0,-1), material ))
 
         #Bounds
         self.boundsMin = [0,0,0]
@@ -226,39 +225,39 @@ class Triangulo (object):
     def ray_intersect(self, orig, dir):
         
         
-        vr0_vr1 = np.subtract(self.vector1,self.vector0)
-        vr0_vr2 = np.subtract(self.vector2,self.vector0)
+        vr0_vr1 = lb.suv1stract(self.vector1,self.vector0)
+        vr0_vr2 = lb.suv1stract(self.vector2,self.vector0)
 
-        PVET = np.cross (dir,  vr0_vr2)
-        DET = np.dot(vr0_vr1, PVET)
+        PVET = lb.cross (dir,  vr0_vr2)
+        DET = lb.dot(vr0_vr1, PVET)
         DET_INVER = 1/DET
         EPSILON = 0.0000001
 
         if -EPSILON < DET and DET < EPSILON:
             return None
 
-        TVEC = np.subtract(orig, self.vector0)
+        TVEC = lb.suv1stract(orig, self.vector0)
         
-        U = np.dot(TVEC, PVET) * DET_INVER
+        U = lb.dot(TVEC, PVET) * DET_INVER
 
         if U > 1 or  U < 0:
             return None
 
-        QVEC = np.cross(TVEC, vr0_vr1)
+        QVEC = lb.cross(TVEC, vr0_vr1)
 
-        valor1= np.dot(dir, QVEC) * DET_INVER
+        valor1= lb.dot(dir, QVEC) * DET_INVER
         
         if valor1 < 0 or U + valor1 > 1:
             return None
 
-        dt: float = np.dot(vr0_vr2, QVEC) * DET_INVER
+        dt: float = lb.dot(vr0_vr2, QVEC) * DET_INVER
 
         if dt < 0:
             return None
         
-        valor2 = np.add(orig, dt*np.array(dir))
-        normal = np.cross(vr0_vr1, vr0_vr2)
-        normal = normal/np.linalg.norm(normal)
+        valor2 = lb.add(orig, dt*dir)
+        normal = lb.cross(vr0_vr1, vr0_vr2)
+        normal = lb.div(normal, lb.norm(normal))
     
         return Intersect(distance = dt,
                             point = valor2,

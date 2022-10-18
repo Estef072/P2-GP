@@ -1,10 +1,11 @@
 import struct
 from collections import namedtuple
-import numpy as np
+from numpy import arctan2, pi, arccos
 from figures import *
 from lights import *
 from math import cos, sin, tan, pi
 from obj import Obj
+import libmate as lb
 
 
 STEPS = 1
@@ -138,7 +139,7 @@ class Raytracer(object):
 
                 lightColor = (diffuseColor + specColor) * (1 - shadowIntensity)
 
-                finalColor = np.add(finalColor, lightColor)
+                finalColor = lb.add(finalColor, lightColor)
 
         elif material.matType == REFLECTIVE:
             reflect = reflectVector(intersect.normal, np.array(dir) * -1)
@@ -147,20 +148,20 @@ class Raytracer(object):
 
             specColor = np.array([0,0,0])
             for light in self.lights:
-                specColor = np.add(specColor, light.getSpecColor(intersect, self))
+                specColor = lb.add(specColor, light.getSpecColor(intersect, self))
 
             finalColor = reflectColor + specColor
 
         elif material.matType == TRANSPARENT:
-            outside = np.dot(dir, intersect.normal) < 0
+            outside = lb.dot(dir, intersect.normal) < 0
             bias = intersect.normal * 0.001
 
             specColor = np.array([0,0,0])
             for light in self.lights:
-                specColor = np.add(specColor, light.getSpecColor(intersect, self))
+                specColor = lb.add(specColor, light.getSpecColor(intersect, self))
 
             reflect = reflectVector(intersect.normal, np.array(dir) * -1)
-            reflectOrig = np.add(intersect.point, bias) if outside else np.subtract(intersect.point, bias)
+            reflectOrig = lb.add(intersect.point, bias) if outside else lb.suv1stract(intersect.point, bias)
             reflectColor = self.cast_ray(reflectOrig, reflect, None, recursion + 1)
             reflectColor = np.array(reflectColor)
 
@@ -169,7 +170,7 @@ class Raytracer(object):
             refractColor = np.array([0,0,0])
             if kr < 1:
                 refract = refractVector(intersect.normal, dir, material.ior)
-                refractOrig = np.subtract(intersect.point, bias) if outside else np.add(intersect.point, bias)
+                refractOrig = lb.suv1stract(intersect.point, bias) if outside else lb.add(intersect.point, bias)
                 refractColor = self.cast_ray(refractOrig, refract, None, recursion + 1)
                 refractColor = np.array(refractColor)
 
@@ -192,7 +193,7 @@ class Raytracer(object):
 
     def glRender(self):
         # Proyeccion
-        t = tan((self.fov * np.pi / 180) / 2) * self.nearPlane
+        t = tan((self.fov * pi / 180) / 2) * self.nearPlane
         r = t * self.vpWidth / self.vpHeight
 
         for y in range(self.vpY, self.vpY + self.vpHeight + 1, STEPS):
