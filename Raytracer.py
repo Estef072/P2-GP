@@ -3,8 +3,8 @@ from texture import *
 from figures import *
 from lights import *
 
-width = 200
-height =200
+width = 3000
+height =3000
 
 # Materiales
 
@@ -63,4 +63,4 @@ rtx.scene.append( Sphere(V3(3,-3,-10), 1, RUBY))
 
 rtx.glRender()
 
-rtx.glFinish("output2.bmp")
+rtx.glFinish("output_Final.bmp")
