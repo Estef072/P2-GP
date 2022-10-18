@@ -52,7 +52,7 @@ class Sphere(object):
             return None
         
         # P = O + t0 * D
-        P = lb.add(orig, t0 * dir)
+        P = lb.add(orig, lb.multiarray((dir),t0))
         normal = lb.suv1stract(P, self.center)
         normal = normal / lb.norm(normal)
 
@@ -84,7 +84,7 @@ class Plane(object):
 
             if t > 0:
                 # P = O + t*D
-                P = lb.add(orig, t * dir)
+                P = lb.add(orig,lb.multiarray(dir,t))
                 return Intersect(distance = t,
                                  point = P,
                                  normal = self.normal,
@@ -255,10 +255,10 @@ class Triangulo (object):
         if dt < 0:
             return None
         
-        valor2 = lb.add(orig, dt*dir)
+        valor2 = lb.add(orig, lb.multiarray(dir,dt))
         normal = lb.cross(vr0_vr1, vr0_vr2)
-        normal = lb.div(normal, lb.norm(normal))
-    
+        normal = lb.div(normal,lb.norm(normal))
+     
         return Intersect(distance = dt,
                             point = valor2,
                             normal = normal,

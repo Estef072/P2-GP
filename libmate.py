@@ -1,13 +1,12 @@
 import math
 
-from numpy import matrix
 
 def multMatrix (V1,V2):
     matrix = [[0, 0, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
             [0,0,0,0]]
-    V2_0 =  len(V2[0])
+    V2_0: float =  len(V2[0])
     for i in range (len(V1)):
         for j in range (len(V2_0 )):
             for v1 in range (len(V2)):
@@ -15,26 +14,15 @@ def multMatrix (V1,V2):
     
     return matrix
 
-def suv1stract (v0,v1):
-    if any(isinstance(x, list) 
-        for x in v0):
-        return [suv1stract(v0[i],v1[i]) for i in range(len(v0))]
-    return [v0[i]-v1[i] for i in range(len(v0))]
-
-    
-
-def add (v0,v1):
-    matrix= [0,0,0]
-    for i in range( len(v0)):
-        matrix[i] = v0[i] + v1[i]
-
-    return matrix
+def suv1stract(v0,b): 
+    if any(isinstance(x, list) for x in v0):
+        return [suv1stract(v0[i],b[i]) for i in range(len(v0))]
+    return [v0[i]-b[i] for i in range(len(v0))]
 
 
-def dot (v0,v1):
-    result = 0
-    for i in range(len(v0)):
-        result = result + v0[i]*v1[i]
+   
+def dot(v0,v1) -> float: 
+    return sum(v0*v1 for v0,v1 in zip(v0,v1))
     return result
 
 
@@ -63,6 +51,10 @@ def multiVXM(v0, num):
     for i in range(len(v0)):
         matrix[i] = v0[i] * num
     return matrix
+def add (v0,v1):
+    if any(isinstance(x, list) for x in v0):
+        return [add(v0[i],v1[i]) for i in range(len(v0))]
+    return [v0[i]+v1[i] for i in range(len(v0))]
 
 def Ov1_determinante(v0): 
     ##aplica cuando la matriz es 2x2
@@ -83,4 +75,8 @@ def inverse(v0):
         raise ValueError("Matrix is not invertiv1le, determinant is zero.")
     adj = [[(-1)**(i+j) * Ov1_determinante(detMi(v0,i,j)) for j in range(len(v0))] for i in range(len(v0))]
     return div(Matrix_trans(adj),det)
-                
+
+
+def multiarray(v0:list, v1:list or float or int):
+    if isinstance(v1,(float,int)):
+        return [C*v1 for C in v0] 
